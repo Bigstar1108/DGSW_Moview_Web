@@ -7,7 +7,7 @@ import { TMDB_API_KEY } from '../config/config.json';
 import defaultApi from '../lib/api/defaultApi';
 import NowPlayingCard from '../components/nowPlayingCard';
 import { Pause, PlayArrow } from '@material-ui/icons';
-import PacmanLoader from 'react-spinners';
+import { PacmanLoader } from 'react-spinners';
 
 const Container = styled.div`
     display : flex;
@@ -40,6 +40,14 @@ const TopSliderBox = styled.div`
     margin-top : 10px;
     margin-bottom : 10px;
     justify-content : flex-end;
+`;
+
+const BottomSliderBox = styled.div`
+    display : flex;
+    width : 100%;
+    height : 95%;
+    justify-content : center;
+    align-items : center;
 `;
 
 const ControlSlideBtn = styled.button`
@@ -125,23 +133,24 @@ class Home extends React.Component{
                             <ControlSlideBtn active = {this.state.playActive} onClick = {() => this.onClickSliderBtn('play')}><PlayArrow style = {{fontSize : "11px"}} /></ControlSlideBtn>
                         </TopSliderBox>
                         
-                        <Slider {...settings} ref = {slider => (this.slider = slider)}>
-                            {this.state.movieList && this.state.movieList.length > 0 ? (
-                                this.state.movieList.slice(0, 10).map((movieLists, index) => (
-                                    <NowPlayingCard
-                                        key = {index}
-                                        id = {movieLists.id}
-                                        title = {movieLists.title}
-                                        poster = {movieLists.poster_path}
-                                        date = {movieLists.release_date}
-                                        vote_average = {movieLists.vote_average}
-                                        adult = {movieLists.adult}
-                                    />
-                                ))
-                            ) : (
-                                <div><PacmanLoader loading = {true} color = {"#F03535"} css = {""} /> </div>
-                            )}
-                        </Slider>
+                        <BottomSliderBox>
+                            {this.state.movieList && this.state.movieList.length > 0 ? 
+                                <Slider {...settings} style = {{width : "100%", heihgt : "100%"}} ref = {slider => (this.slider = slider)}>
+                                {
+                                    this.state.movieList.slice(0, 10).map((movieLists, index) => (
+                                        <NowPlayingCard
+                                            key = {index}
+                                            id = {movieLists.id}
+                                            title = {movieLists.title}
+                                            poster = {movieLists.poster_path}
+                                            date = {movieLists.release_date}
+                                            vote_average = {movieLists.vote_average}
+                                            adult = {movieLists.adult}
+                                        />
+                                    ))
+                                }
+                            </Slider> : <PacmanLoader loading = {true} color = {"#F03535"} /> }
+                            </BottomSliderBox>
                     </SliderContainer>
                 </Body>
             </Container>
