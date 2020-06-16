@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 const Header = styled.div`
     display : flex;
     width : 100vw;
-    height : 80px;
+    height : 70px;
     background-color : #fff;
     border-bottom-style : solid;
     border-bottom-width : 1px;
@@ -37,7 +37,6 @@ const TextConatiner = styled.div`
     width : 80%;
     height : 100%;
     align-items : center;
-    justify-content : center;
 `;
 
 const ButtonContainer = styled.div`
@@ -152,8 +151,8 @@ class Headers extends React.Component{
                     </Link>
 
                     <TextConatiner>
-                        <HeaderText>영화</HeaderText>
-                        <HeaderText>영화</HeaderText>
+                        <HeaderText>영화 검색하기</HeaderText>
+                        <HeaderText>리뷰</HeaderText>
                         <HeaderText>영화</HeaderText>
                     </TextConatiner>
 
