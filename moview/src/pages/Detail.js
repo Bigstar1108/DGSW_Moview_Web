@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import { TMDB_API_KEY } from '../config/config.json';
 import defaultApi from '../lib/api/defaultApi';
 import axios from 'axios';
+import '../styles/Detail.css';
 
 const Container = styled.div`
     display : flex;
@@ -19,7 +20,6 @@ const Body = styled.div`
     height : 100%;
     flex-direction : column;
     padding-top : 70px;
-    background-color : #E6E2E2;
 `;
 
 const TobBody = styled.div`
@@ -37,15 +37,15 @@ const BottomBody = styled.div`
 
 const TobImgBox = styled.div`
     display : flex;
-    width : 40%;
+    width : 25%;
     height : 100%;
-    justify-content : center;
 `;
 
 const TobInfoBox = styled.div`
     display : flex;
-    width : 60%;
+    width : 80%;
     height : 100%;
+    flex-direction : column;
     background-color : green;
 `;
 
@@ -84,7 +84,13 @@ class Detail extends React.Component{
                         <TobImgBox>
                             <img src = {`https://image.tmdb.org/t/p/w300${this.state.Details.poster_path}`} />
                         </TobImgBox>
-                        <TobInfoBox></TobInfoBox>
+                        <TobInfoBox>
+                            <div className = "titleBox">
+                                <span className = "title">{this.state.Details.title}</span>
+                                <span className = "textBar">|</span>
+                                <span className = "tagline">{this.state.Details.tagline}</span>
+                            </div>
+                        </TobInfoBox>
                     </TobBody>
                     <BottomBody></BottomBody>
                 </Body>
