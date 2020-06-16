@@ -1,0 +1,30 @@
+.title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 25px;
+    font-weight: bold;
+    margin-left: 10px;
+    color : black;
+}
+
+.adult{
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 10px;
+    color : black;
+}
+
+.date{
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    margin-left: 10px;
+    color : black;
+}
+
+.rating{
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 10px;
+    color : black;
+}
