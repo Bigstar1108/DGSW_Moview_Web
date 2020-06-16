@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import Login from './Login.reducer';
 
 const MoviewReducer = combineReducers({
-    Login
+    Login,
 });
 
 export default MoviewReducer;
