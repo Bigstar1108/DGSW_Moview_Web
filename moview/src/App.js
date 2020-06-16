@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Join from './pages/Join';
 import Profile from './pages/Profile';
+import Detail from './pages/Detail';
 
 const Rootdiv = styled.div`
   height : 100vh;
@@ -28,6 +29,7 @@ class App extends React.Component{
           <Route path = "/login" component = {Login} />
           <Route path = "/join" component = {Join} />
           <Route path = "/profile" component = {Profile} />
+          <Route path = '/detail/:movieId' component = {Detail} />
         </Rootdiv>
       </React.Fragment>
       
