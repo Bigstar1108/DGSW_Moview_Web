@@ -7,6 +7,7 @@ import axios from 'axios';
 import '../styles/Detail.css';
 import StarRatings from 'react-star-ratings';
 import { Link } from 'react-router-dom';
+import ActorBox from '../components/CreditActorBox';
 
 const Container = styled.div`
     display : flex;
@@ -54,23 +55,6 @@ const CreditBox = styled.div`
     width : 60%;
     height : 100%;
     flex-direction : column;
-    background-color : red;
-`;
-
-const CreditCompanyBox = styled.div`
-    display : flex;
-    width : 100%;
-    height : 45%;
-    background-color : yellow;
-    flex-direction : column;
-`;
-
-const CreditActorBox = styled.div`
-    display : flex;
-    width : 100%;
-    height : 50%;
-    flex-direction : column;
-    background-color : green;
 `;
 
 const ReviewBox = styled.div`
@@ -86,6 +70,14 @@ const CreditTopBox = styled.div`
     width : 100%;
     height : 10%;
     justify-content : flex-end;
+`;
+
+const CreditBottomBox = styled.div`
+    display : flex;
+    width : 100%;
+    height : 90%;
+    justify-content : center;
+    flex-direction : row;
 `;
 
 const CreditExtraText = styled(Link)`
@@ -179,18 +171,18 @@ class Detail extends React.Component{
                                 <div className = "InfoTextBox">
                                     <span className = "type">영화 평점 : </span>
                                     <StarRatings
-                                        rating = {this.state.Details.vote_average}
-                                        numberOfStars = {10}
+                                        rating = {Math.round(this.state.Details.vote_average)/2}
+                                        numberOfStars = {5}
                                         starRatedColor = "#F03535"
                                         starDimension = "13px"
                                         starSpacing = '2px'
                                     />
-                                    <span className = "type" style = {{marginLeft : "10px"}}>{this.state.Details.vote_average}점</span>
+                                    <span className = "type" style = {{marginLeft : "10px"}}>{Math.round(this.state.Details.vote_average)/2}점</span>
                                     <span className="textBar">|</span>
                                     <span className = "type">무뷰어 평점 : </span>
                                     <StarRatings
                                         rating = {3}
-                                        numberOfStars = {10}
+                                        numberOfStars = {5}
                                         starRatedColor = "#F03535"
                                         starDimension = "13px"
                                         starSpacing = '2px'
@@ -201,7 +193,7 @@ class Detail extends React.Component{
                                     <span className = "type">나의 평점 : </span>
                                     <StarRatings
                                         rating = {3}
-                                        numberOfStars = {10}
+                                        numberOfStars = {5}
                                         starRatedColor = "#F03535"
                                         starDimension = "13px"
                                         starSpacing = '2px'
@@ -223,21 +215,24 @@ class Detail extends React.Component{
                     <BottomBody>
                         <CreditBox>
                             <span className = "type" style = {{marginTop : "10px"}}>배우/제작진</span>
-                            <CreditActorBox>
                                 <CreditTopBox>
                                     <CreditExtraText to = {`/detail/${this.state.Details.id}/credit`}>더보기</CreditExtraText>
                                 </CreditTopBox>
-                                {/* {
-                                    this.state.Credits.slice(0, 5).map((credit, i) => (
-                                        
-                                    ))
-                                } */}
-                            </CreditActorBox>
-                            
-                            <CreditCompanyBox>
 
-                            </CreditCompanyBox>
+                                <CreditBottomBox>
+                                    {
+                                        this.state.Credits.slice(0, 5).map((credit, i) => (
+                                            <ActorBox
+                                                key = {i}
+                                                poster = {credit.profile_path}
+                                                character = {credit.character}
+                                                name = {credit.name}
+                                            />
+                                        ))
+                                    }
+                                </CreditBottomBox>
                         </CreditBox>
+
                         <ReviewBox></ReviewBox>
                     </BottomBody>
                 </Body>

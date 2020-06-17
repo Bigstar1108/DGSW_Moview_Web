@@ -52,7 +52,7 @@ class NowPlayingCard extends React.Component{
                         <RateBox>
                             <StarRatings
                                 rating = {this.props.vote_average}
-                                numberOfStars = {10}
+                                numberOfStars = {5}
                                 starRatedColor = "#F03535"
                                 starDimension = "15px"
                                 starSpacing = '3px'

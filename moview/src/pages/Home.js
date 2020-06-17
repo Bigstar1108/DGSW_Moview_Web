@@ -144,7 +144,7 @@ class Home extends React.Component{
                                             title = {movieLists.title}
                                             poster = {movieLists.poster_path}
                                             date = {movieLists.release_date}
-                                            vote_average = {movieLists.vote_average}
+                                            vote_average = {Math.round(movieLists.vote_average)/2}
                                             adult = {movieLists.adult}
                                         />
                                     ))
