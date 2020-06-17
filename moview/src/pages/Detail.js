@@ -87,13 +87,39 @@ const CreditExtraText = styled(Link)`
     margin-right : 3%;
 `;
 
+const LikeButton = styled.button`
+    width : 90px;
+    height : 36px;
+    outline : none;
+    cursor : pointer;
+    font-family : 'Noto Sans KR', sans-serif;
+    border-radius : 3px;
+    font-size : 13px;
+    font-weight : bold;
+    position : fixed;
+    right : 0;
+    margin-right : 10%;
+    ${prop => prop.active ? 
+    `background-color : #F03535;
+     color : white;
+     border-style : none;
+    ` : 
+    `background-color : white;
+     border-style : solid;
+     border-color : black;
+     border-width : 1px;
+    `
+    }
+`;
+
 class Detail extends React.Component{
     state = {
-        Details : [],
-        Credits : [],
-        DateArray : [],
-        Genres : [],
-        vote : 0
+        Details : [], //영화 상세정보
+        Credits : [], //배우, 제작진 정보
+        DateArray : [], //개봉일 split한 배열
+        Genres : [], //장르 모음
+        vote : 0, //영화 평점
+        Like : false //즐겨찾기
     }
 
     componentDidMount(){
@@ -122,6 +148,25 @@ class Detail extends React.Component{
             alert("영화 상세정보를 불러오는데 실패했습니다.");
         })
     }
+    //기능 추가 필요.
+    onClickLike = () => {
+        switch(this.state.Like){
+            case true:
+                this.setState({
+                    Like : !this.state.Like,
+                });
+                alert("즐겨찾기를 해제했습니다.");
+                return null;
+            case false:
+                this.setState({
+                    Like : !this.state.Like,
+                });
+                alert("즐겨찾기에 추가했습니다.");
+                return null;
+            default:
+                return null;
+        }
+    }
 
     render(){
         return(
@@ -130,6 +175,7 @@ class Detail extends React.Component{
                 
                 <Body>
                     <TobBody>
+                        <LikeButton active = {this.state.Like} onClick = {() => this.onClickLike()} >즐겨찾기</LikeButton>
                         <TobImgBox>
                             <img src = {`https://image.tmdb.org/t/p/w300${this.state.Details.poster_path}`} />
                         </TobImgBox>
