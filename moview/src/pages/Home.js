@@ -149,7 +149,7 @@ class Home extends React.Component{
                                         />
                                     ))
                                 }
-                            </Slider> : <PacmanLoader loading = {true} color = {"#F03535"} /> }
+                            </Slider> : <PacmanLoader loading = {true} color = {"#ffff00"} /> }
                             </BottomSliderBox>
                     </SliderContainer>
                 </Body>
