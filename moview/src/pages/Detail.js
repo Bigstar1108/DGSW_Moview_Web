@@ -22,7 +22,7 @@ const Body = styled.div`
     width : 80%;
     height : 100%;
     flex-direction : column;
-    padding-top : 70px;
+    padding-top : 80px;
 `;
 
 const TobBody = styled.div`
@@ -52,14 +52,14 @@ const TobInfoBox = styled.div`
 
 const CreditBox = styled.div`
     display : flex;
-    width : 60%;
+    width : 50%;
     height : 100%;
     flex-direction : column;
 `;
 
 const ReviewBox = styled.div`
     display : flex;
-    width : 40%;
+    width : 50%;
     height : 100%;
     flex-direction : column;
     background-color : blue;
@@ -76,7 +76,6 @@ const CreditBottomBox = styled.div`
     display : flex;
     width : 100%;
     height : 90%;
-    justify-content : center;
     flex-direction : row;
 `;
 
@@ -85,7 +84,7 @@ const CreditExtraText = styled(Link)`
     font-size : 15px;
     font-family: 'Noto Sans KR', sans-serif;
     color : black;
-    margin-right : 10px;
+    margin-right : 3%;
 `;
 
 class Detail extends React.Component{
@@ -93,7 +92,8 @@ class Detail extends React.Component{
         Details : [],
         Credits : [],
         DateArray : [],
-        Genres : []
+        Genres : [],
+        vote : 0
     }
 
     componentDidMount(){
@@ -106,11 +106,13 @@ class Detail extends React.Component{
                 const Detail = response[0].data;
                 const Credit = response[1].data.cast;
                 const DateArray = Detail.release_date.split('-');
+                const voteAverage = Math.round(Detail.vote_average)/2;
                 this.setState({
                     Details : Detail,
                     Credits : Credit,
                     DateArray : DateArray,
-                    Genres : Detail.genres
+                    Genres : Detail.genres,
+                    vote : voteAverage
                 });
                 console.log(Detail);
                 console.log(Credit);
@@ -171,7 +173,7 @@ class Detail extends React.Component{
                                 <div className = "InfoTextBox">
                                     <span className = "type">영화 평점 : </span>
                                     <StarRatings
-                                        rating = {Math.round(this.state.Details.vote_average)/2}
+                                        rating = {this.state.vote}
                                         numberOfStars = {5}
                                         starRatedColor = "#F03535"
                                         starDimension = "13px"
@@ -233,7 +235,12 @@ class Detail extends React.Component{
                                 </CreditBottomBox>
                         </CreditBox>
 
-                        <ReviewBox></ReviewBox>
+                        <ReviewBox>
+                            <span className = "type" style = {{marginTop : "10px"}}>리뷰</span>
+                            <CreditTopBox>
+                                <CreditExtraText>더보기</CreditExtraText>
+                            </CreditTopBox>
+                        </ReviewBox>
                     </BottomBody>
                 </Body>
             </Container>
