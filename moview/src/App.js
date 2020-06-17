@@ -31,7 +31,7 @@ class App extends React.Component{
           <Route path = "/join" component = {Join} />
           <Route path = "/profile" component = {Profile} />
           <Switch>
-            <Route path = '/detail/:movieId' component = {Detail} />
+            <Route exact path = '/detail/:movieId' component = {Detail} />
             <Route path = '/detail/:movieId/credit' component = {Credit} />
           </Switch>
         </Rootdiv>
