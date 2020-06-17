@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import Home from './pages/Home';
@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Join from './pages/Join';
 import Profile from './pages/Profile';
 import Detail from './pages/Detail';
+import Credit from './pages/CreditDetail';
 
 const Rootdiv = styled.div`
   height : 100vh;
@@ -29,7 +30,10 @@ class App extends React.Component{
           <Route path = "/login" component = {Login} />
           <Route path = "/join" component = {Join} />
           <Route path = "/profile" component = {Profile} />
-          <Route path = '/detail/:movieId' component = {Detail} />
+          <Switch>
+            <Route path = '/detail/:movieId' component = {Detail} />
+            <Route path = '/detail/:movieId/credit' component = {Credit} />
+          </Switch>
         </Rootdiv>
       </React.Fragment>
       
