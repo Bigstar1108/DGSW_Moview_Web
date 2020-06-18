@@ -7,7 +7,8 @@ import Login from './pages/Login';
 import Join from './pages/Join';
 import Profile from './pages/Profile';
 import Detail from './pages/Detail';
-import Credit from './pages/CreditDetail';
+import CreditDetail from './pages/CreditDetail';
+import SearchMovie from './pages/SearchMovie';
 
 const Rootdiv = styled.div`
   height : 100vh;
@@ -26,13 +27,14 @@ class App extends React.Component{
       <React.Fragment>
         <GlobalStyle />
         <Rootdiv>
-          <Route exact path = "/" component = {Home} />
-          <Route path = "/login" component = {Login} />
-          <Route path = "/join" component = {Join} />
-          <Route path = "/profile" component = {Profile} />
           <Switch>
+            <Route exact path = "/" component = {Home} />
+            <Route exact path = "/login" component = {Login} />
+            <Route exact path = "/join" component = {Join} />
+            <Route exact path = "/profile" component = {Profile} />
+            <Route exact path = "/searchmovie" component = {SearchMovie} />
             <Route exact path = '/detail/:movieId' component = {Detail} />
-            <Route path = '/detail/:movieId/credit' component = {Credit} />
+            <Route exact path = '/detail/:movieId/credit' component = {CreditDetail} />
           </Switch>
         </Rootdiv>
       </React.Fragment>
