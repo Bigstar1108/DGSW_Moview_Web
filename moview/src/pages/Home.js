@@ -100,7 +100,7 @@ class Home extends React.Component{
 
     componentDidMount(){
         defaultApi.get(
-            `now_playing?api_key=${TMDB_API_KEY}&language=ko&page=1&region=KR`
+            `movie/now_playing?api_key=${TMDB_API_KEY}&language=ko&page=1&region=KR`
         ).then((response) => {
             this.setState({
                 movieList : response.data.results,

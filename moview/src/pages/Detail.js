@@ -8,6 +8,7 @@ import '../styles/Detail.css';
 import StarRatings from 'react-star-ratings';
 import { Link } from 'react-router-dom';
 import ActorBox from '../components/CreditActorBox';
+import { connect } from 'react-redux';
 
 const Container = styled.div`
     display : flex;
@@ -48,6 +49,7 @@ const TobInfoBox = styled.div`
     width : 80%;
     height : 100%;
     flex-direction : column;
+    margin-left : 2%;
 `;
 
 const CreditBox = styled.div`
@@ -119,12 +121,12 @@ class Detail extends React.Component{
         DateArray : [], //개봉일 split한 배열
         Genres : [], //장르 모음
         vote : 0, //영화 평점
-        Like : false //즐겨찾기
+        Like : false, //즐겨찾기
     }
 
     componentDidMount(){
-        const getDetail = defaultApi.get(`${this.props.match.params.movieId}?api_key=${TMDB_API_KEY}&language=ko`);
-        const getCredits = defaultApi.get(`${this.props.match.params.movieId}/credits?api_key=${TMDB_API_KEY}`)
+        const getDetail = defaultApi.get(`movie/${this.props.match.params.movieId}?api_key=${TMDB_API_KEY}&language=ko`);
+        const getCredits = defaultApi.get(`movie/${this.props.match.params.movieId}/credits?api_key=${TMDB_API_KEY}`);
 
         axios.all([getDetail, getCredits])
         .then(
@@ -150,21 +152,54 @@ class Detail extends React.Component{
     }
     //기능 추가 필요.
     onClickLike = () => {
-        switch(this.state.Like){
-            case true:
-                this.setState({
-                    Like : !this.state.Like,
-                });
-                alert("즐겨찾기를 해제했습니다.");
-                return null;
-            case false:
-                this.setState({
-                    Like : !this.state.Like,
-                });
-                alert("즐겨찾기에 추가했습니다.");
-                return null;
+        switch(localStorage.getItem('KeepLogin')){
+            case 'true':
+                if(!(!!localStorage.getItem('member')) || !(!!localStorage.getItem('token'))){
+                    alert("로그인을 먼저 해주세요 :D");
+                    return null;
+                }else{
+                    switch(this.state.Like){
+                        case true:
+                            this.setState({
+                                Like : !this.state.Like,
+                            });
+                            alert("즐겨찾기를 해제했습니다.");
+                            return null;
+                        case false:
+                            this.setState({
+                                Like : !this.state.Like,
+                            });
+                            alert("즐겨찾기에 추가했습니다.");
+                            return null;
+                        default:
+                            return null;
+                    }
+                }
+            case 'false':
+                if(!(!!this.props.member) || !(!!this.props.token)){
+                    //false면 로그인이 되어있지 않음
+                    alert("로그인을 먼저 해주세요 :D");
+                    return null;
+                }else{
+                    switch(this.state.Like){
+                        case true:
+                            this.setState({
+                                Like : !this.state.Like,
+                            });
+                            alert("즐겨찾기를 해제했습니다.");
+                            return null;
+                        case false:
+                            this.setState({
+                                Like : !this.state.Like,
+                            });
+                            alert("즐겨찾기에 추가했습니다.");
+                            return null;
+                        default:
+                            return null;
+                    }
+                }
             default:
-                return null;
+                alert("로그인을 먼저 해주세요 :D");
         }
     }
 
@@ -264,7 +299,9 @@ class Detail extends React.Component{
                         <CreditBox>
                             <span className = "type" style = {{marginTop : "10px"}}>배우/제작진</span>
                                 <CreditTopBox>
-                                    <CreditExtraText to = {`/detail/${this.state.Details.id}/credit`}>더보기</CreditExtraText>
+                                    <CreditExtraText to = {`/detail/${this.state.Details.id}/credit`}>
+                                        더보기
+                                    </CreditExtraText>
                                 </CreditTopBox>
 
                                 <CreditBottomBox>
@@ -293,5 +330,14 @@ class Detail extends React.Component{
         );
     }
 }
+
+let mapStateToProps = (state) => {
+    return{
+        member : state.Login.member, //state.리듀서.원하는변수
+        token : state.Login.member
+    };
+}
+
+Detail = connect(mapStateToProps)(Detail);
 
 export default Detail;
