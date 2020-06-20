@@ -10,7 +10,7 @@ const Header = styled.div`
     height : 70px;
     background-color : #fff;
     border-bottom-style : solid;
-    border-bottom-width : 1px;
+    border-bottom-width : 1.5px;
     border-bottom-color : #f7f7fa;
     justify-content : center;
     position : fixed;
