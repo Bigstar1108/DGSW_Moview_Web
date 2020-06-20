@@ -7,6 +7,7 @@ const Container = styled.div`
     height : 100%;
     flex-direction : row;
     cursor : pointer;
+    margin-bottom : 10%;
 `;
 
 const ProfileImgBox = styled.div`
