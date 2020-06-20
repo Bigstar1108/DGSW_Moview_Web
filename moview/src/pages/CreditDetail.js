@@ -53,6 +53,7 @@ class CreditDetail extends React.Component{
             this.setState({
                 credit : response.data.cast,
             })
+            console.log(response.data.cast);
         })
         .catch((error) => {
             console.log(error);
@@ -64,7 +65,7 @@ class CreditDetail extends React.Component{
             dots : true,
             infinite : true,
             speed : 1000,
-            slidesToShow : 5,
+            slidesToShow : 3,
             slidesToScroll : 2,
         }
 
