@@ -31,7 +31,7 @@ class LastKeywordBox extends React.Component{
                     {this.props.keyword}
                 </KeywordText>
                 <Clear
-                    style = {{position : 'fixed', right : 0, marginRight : "10%", color : "#CECED3", cursor : "pointer"}}
+                    style = {{position : 'absolute', right : 0, marginRight : "10%", color : "#CECED3", cursor : "pointer"}}
                     onClick = {() => this.props.handleArrayRemove(this.props.id)}
                 />
             </Container>
