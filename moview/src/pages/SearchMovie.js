@@ -1,14 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ArrowBackIos } from '@material-ui/icons';
+import { ArrowBackIos, ArrowUpward } from '@material-ui/icons';
 import LastKeywordBox from '../components/Search/LastKeywordBox';
 import MovieResultBox from '../components/Search/MovieResultBox';
 import { TMDB_API_KEY } from '../config/config.json';
 import defaultApi from '../lib/api/defaultApi';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Container = styled.div`
     display : flex;
-    width : 100vw;
+    width : 100%;
     height : 100vh;
     flex-direction : column;
     align-items : center;
@@ -101,13 +102,39 @@ const ResultBody = styled.div`
     align-items : center;
 `;
 
+const ArrowUpBtn = styled.button`
+    display : flex;
+    width : 50px;
+    height : 50px;
+    outline : none;
+    border-radius : 50%;
+    border-width : 2px;
+    border-style : solid;
+    border-color : black;
+    justify-content : center;
+    align-items : center;
+    cursor : pointer;
+    background-color : white;
+    position : fixed;
+    right : 0;
+    bottom : 0;
+    margin-right : 20px;
+    margin-bottom : 5%;
+`;
+
 class SearchMovie extends React.Component{
-    id = 0
+    id = 0;
+
     state = {
         keyword : "",
         lastKeyword : [],
         movieResult : null,
-        searchEvent : false //검색 버튼을 누르기 전인지 후인지 확인
+        searchEvent : false, //검색 버튼을 누르기 전인지 후인지 확인
+        limit : true,
+        total_results : 0,
+        total_pages : 0,
+        page : 2,
+        showScroll : false
     }
 
     handleChange = (e) => {
@@ -123,7 +150,20 @@ class SearchMovie extends React.Component{
 
     async componentDidMount(){
         await this.checkLastKeyword();
+        window.addEventListener("scroll", this.checkScrollTop);
     }
+    //현재 스크롤이 얼마나 됬는지 확인하는 함수
+    checkScrollTop = () => {
+        if(!this.state.showScroll && window.pageYOffset > 400){
+            this.setState({
+                showScroll : true
+            });
+        }else if(this.state.showScroll && window.pageYOffset <= 400){
+            this.setState({
+                showScroll : false
+            });
+        }
+    };
 
     //localStorage에 있는 최근검색어 배열이 공백인지 확인
     checkLastKeyword = () => {
@@ -189,12 +229,14 @@ class SearchMovie extends React.Component{
 
     handleSearch = (keyword) => {
         defaultApi.get(
-            `search/movie?api_key=${TMDB_API_KEY}&language=ko&query=${keyword}&page=1&include_adult=true&regin=KR`
+            `search/movie?api_key=${TMDB_API_KEY}&language=ko&query=${keyword}&page=1&include_adult=false&regin=KR`
         ).then((response) => {
             this.setState({
-                movieResult : response.data, //영화 검색 결과
+                movieResult : response.data.results, //영화 검색 결과
                 keyword : keyword, 
-                searchEvent : true //검색 버튼 확인 
+                searchEvent : true, //검색 버튼 확인 
+                total_pages : response.data.total_pages,
+                total_results : response.data.total_results
             });
             console.log(this.state.movieResult);
             this.handleArrayPush(this.state.keyword);
@@ -203,6 +245,38 @@ class SearchMovie extends React.Component{
             console.log(error);
             alert("서버오류 : 검색결과를 불러오지 못했습니다.");
         })
+    }
+    //스크롤이 내려갈 때 마다 새로운 데이터를 불러옴
+    FetchData = async () => {
+        setTimeout(() => {
+            if(this.state.page <= this.state.total_pages){
+                defaultApi.get(
+                    `search/movie?api_key=${TMDB_API_KEY}&language=ko&query=${this.state.keyword}&page=${this.state.page}&include_adult=false&regin=KR`
+                ).then((response) => {
+                    const _movieResult = this.state.movieResult.concat(response.data.results);
+                    this.setState({
+                        movieResult: _movieResult,
+                        page: this.state.page + 1
+                    });
+                }).catch((error) => {
+                    console.log(error);
+                    alert("서버오류 : 더 많은 영화를 불러오는 중 오류가 발생했습니다.");
+                })
+            }else{
+                this.setState({
+                    limit: false,
+                });
+                return null;
+            }
+        }, 1500);   
+    };
+
+    scrollToTop = () => {
+        window.scrollTo({
+            top : 0,
+            left : 0,
+            behavior : 'smooth'
+        });
     }
 
     render(){
@@ -250,16 +324,22 @@ class SearchMovie extends React.Component{
                                 this.state.searchEvent ? 
                                 <>
                                     {
-                                        this.state.movieResult.total_results === 0 ?
+                                        this.state.total_results === 0 ?
                                         <>
                                             <ResultBody>
                                                 <TypeText style = {{margin : 0}}>{this.state.keyword}의 대한 검색결과가 없습니다.</TypeText>
                                             </ResultBody>
                                         </> : 
                                         <>
-                                            <TypeText>총 {this.state.movieResult.total_results}개의 영화가 있습니다.</TypeText>
+                                            <TypeText>총 {this.state.total_results}개의 영화가 있습니다.</TypeText>
+                                            <InfiniteScroll
+                                                dataLength = {this.state.movieResult.length}
+                                                next = {this.FetchData}
+                                                hasMore = {this.state.limit}
+                                                loader = {<h4>Loading...</h4>}
+                                            >
                                             {
-                                                this.state.movieResult.results.map((result, index) => (
+                                                this.state.movieResult.map((result, index) => (
                                                     <MovieResultBox
                                                         key = {index}
                                                         id = {result.id}
@@ -270,6 +350,14 @@ class SearchMovie extends React.Component{
                                                         adult = {result.adult}
                                                     />
                                                 ))
+                                            }
+                                            </InfiniteScroll>
+                                            {
+                                                this.state.showScroll ? 
+                                                <ArrowUpBtn onClick = {() => this.scrollToTop()}>
+                                                    <ArrowUpward />
+                                                </ArrowUpBtn>
+                                                :null
                                             }
                                         </>
                                     }
