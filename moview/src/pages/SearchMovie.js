@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { ArrowBackIos } from '@material-ui/icons';
 import LastKeywordBox from '../components/Search/LastKeywordBox';
+import MovieResultBox from '../components/Search/MovieResultBox';
 import { TMDB_API_KEY } from '../config/config.json';
 import defaultApi from '../lib/api/defaultApi';
 
@@ -244,13 +245,41 @@ class SearchMovie extends React.Component{
                             }
                         </>
                         :
-                        <ResultBody>
+                        <>
                             {
-                                this.state.searchEvent ? <span>d</span> 
+                                this.state.searchEvent ? 
+                                <>
+                                    {
+                                        this.state.movieResult.total_results === 0 ?
+                                        <>
+                                            <ResultBody>
+                                                <TypeText style = {{margin : 0}}>{this.state.keyword}의 대한 검색결과가 없습니다.</TypeText>
+                                            </ResultBody>
+                                        </> : 
+                                        <>
+                                            <TypeText>총 {this.state.movieResult.total_results}개의 영화가 있습니다.</TypeText>
+                                            {
+                                                this.state.movieResult.results.map((result, index) => (
+                                                    <MovieResultBox
+                                                        key = {index}
+                                                        id = {result.id}
+                                                        title = {result.title}
+                                                        poster = {result.poster_path}
+                                                        date = {result.release_date}
+                                                        vote_average = {Math.round(result.vote_average) / 2}
+                                                        adult = {result.adult}
+                                                    />
+                                                ))
+                                            }
+                                        </>
+                                    }
+                                </>
                                 :
-                                <TypeText style = {{margin : 0}}>찾고싶은 영화의 제목을 검색해주세요!<br />무뷰가 최대한 빨리 결과를 가져오겠습니다 :D</TypeText>
+                                <ResultBody>
+                                    <TypeText style = {{margin : 0}}>찾고싶은 영화의 제목을 검색해주세요!<br />무뷰가 최대한 빨리 결과를 가져오겠습니다 :D</TypeText>
+                                </ResultBody>
                             }
-                        </ResultBody>
+                        </>
                     }
                 </Body>
             </Container>
