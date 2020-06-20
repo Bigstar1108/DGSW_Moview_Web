@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ArrowBackIos } from '@material-ui/icons';
+import LastKeywordBox from '../components/Search/LastKeywordBox';
+import { TMDB_API_KEY } from '../config/config.json';
+import defaultApi from '../lib/api/defaultApi';
 
 const Container = styled.div`
     display : flex;
@@ -16,7 +19,7 @@ const Header = styled.div`
     height: 70px;
     background-color : #fff;
     border-bottom-style : solid;
-    border-bottom-width : 1px;
+    border-bottom-width : 1.5px;
     border-bottom-color : #f7f7fa;
     justify-content : center;
     position : fixed;
@@ -77,26 +80,100 @@ const Body = styled.div`
     height : 100%;
     padding-top : 70px;
     flex-direction : column;
-    background-color : blue;
+`;
+
+const TypeText = styled.span`
+    font-family : 'Noto Sans KR', sans-serif;
+    font-size : 20px;
+    font-weight : bold;
+    color : black;
+    margin-top : 10px;
+    margin-bottom : 20px;
+`;
+
+const ResultBody = styled.div`
+    display : flex;
+    width : 100%;
+    height: 100%;
+    flex-direction : column;
+    justify-content : center;
+    align-items : center;
 `;
 
 class SearchMovie extends React.Component{
     id = 0
     state = {
         keyword : "",
-        lastKeyword : []
+        lastKeyword : [],
+        movieResult : null,
+        searchEvent : false //검색 버튼을 누르기 전인지 후인지 확인
     }
 
     handleChange = (e) => {
         this.setState({
             keyword : e.target.value
         })
+        if(e.target.value === ""){
+            this.setState({
+                searchEvent : false
+            });
+        }
     }
 
+    async componentDidMount(){
+        await this.checkLastKeyword();
+    }
+
+    //localStorage에 있는 최근검색어 배열이 공백인지 확인
+    checkLastKeyword = () => {
+        switch(!!JSON.parse(localStorage.getItem('lastKeyword'))){
+            case true:
+                this.setState({
+                    lastKeyword : JSON.parse(localStorage.getItem('lastKeyword')),
+                });
+                return null;
+            case false:
+                return null;
+            default:
+                return null;
+        }
+    }
+
+    //최근 검색어 배열에 새로운 키워드의 유무를 확인하는 함수
+    getIndex = (arr, prop, value) => {
+        for(var i = 0; i < arr.length; i++){
+            if(arr[i][prop] === value){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //배열에 항목을 추가하여 localStorage에 저장
     handleArrayPush = (keyword) => {
+        switch(this.getIndex(this.state.lastKeyword, "keyword", this.state.keyword)){
+            case true:
+                console.log(keyword + "는 이미 미리보기에 존재합니다.");
+                return null;
+            case false:
+                var _lastKeyword = this.state.lastKeyword.concat ({ id : this.id++, keyword : keyword});
+                this.setState({
+                    lastKeyword : _lastKeyword,
+                });
+                localStorage.setItem('lastKeyword', JSON.stringify(_lastKeyword));
+                return null;
+            default:
+                return null;
+        }
+    }
+
+    //배열에 항목을 삭제하여 localStorage에 저장
+    handleArrayRemove = (id) => {
+        var _lastKeyword = this.state.lastKeyword.filter(data => data.id !== id);
         this.setState({
-            lastKeyword : this.state.lastKeyword.concat({ id : this.id++, keyword : keyword })
+            lastKeyword : _lastKeyword,
         });
+        localStorage.setItem('lastKeyword', JSON.stringify(_lastKeyword));
     }
 
     handleSubmit = (e) => {
@@ -105,10 +182,26 @@ class SearchMovie extends React.Component{
             alert("영화 제목을 입력해주세요.");
             return null;
         }else{
-            this.handleArrayPush(this.state.keyword);
-            localStorage.setItem('lastKeyword', JSON.stringify(this.state.lastKeyword));
-            console.log(JSON.parse(localStorage.getItem('lastKeyword')));
+            this.handleSearch(this.state.keyword);
         }
+    }
+
+    handleSearch = (keyword) => {
+        defaultApi.get(
+            `search/movie?api_key=${TMDB_API_KEY}&language=ko&query=${keyword}&page=1&include_adult=true&regin=KR`
+        ).then((response) => {
+            this.setState({
+                movieResult : response.data, //영화 검색 결과
+                keyword : keyword, 
+                searchEvent : true //검색 버튼 확인 
+            });
+            console.log(this.state.movieResult);
+            this.handleArrayPush(this.state.keyword);
+            alert("검색결과를 불러왔습니다.");
+        }).catch((error) => {
+            console.log(error);
+            alert("서버오류 : 검색결과를 불러오지 못했습니다.");
+        })
     }
 
     render(){
@@ -132,8 +225,32 @@ class SearchMovie extends React.Component{
                 <Body>
                     {
                         this.state.keyword === "" ? 
-                        <span>dd</span>
-                        :<span>aa</span>
+                        <>
+                            {
+                                !(this.state.lastKeyword.length === 0) ?
+                                <>
+                                    <TypeText>최근 검색어</TypeText>
+                                    {
+                                    this.state.lastKeyword.map((data, index) => (
+                                    <LastKeywordBox
+                                        key = {index}
+                                        id = {data.id}
+                                        keyword = {data.keyword}
+                                        lastKeyword = {this.state.lastKeyword}
+                                        handleArrayRemove = {this.handleArrayRemove}
+                                        handleSearch = {this.handleSearch}
+                                    />
+                                ))}</> : <TypeText>최근 검색어가 없습니다...</TypeText>
+                            }
+                        </>
+                        :
+                        <ResultBody>
+                            {
+                                this.state.searchEvent ? <span>d</span> 
+                                :
+                                <TypeText style = {{margin : 0}}>찾고싶은 영화의 제목을 검색해주세요!<br />무뷰가 최대한 빨리 결과를 가져오겠습니다 :D</TypeText>
+                            }
+                        </ResultBody>
                     }
                 </Body>
             </Container>
