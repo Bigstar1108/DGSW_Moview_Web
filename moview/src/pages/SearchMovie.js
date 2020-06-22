@@ -6,6 +6,7 @@ import MovieResultBox from '../components/Search/MovieResultBox';
 import { TMDB_API_KEY } from '../config/config.json';
 import defaultApi from '../lib/api/defaultApi';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Select from 'react-select';
 
 const Container = styled.div`
     display : flex;
@@ -84,6 +85,34 @@ const Body = styled.div`
     flex-direction : column;
 `;
 
+const ResultTopBox = styled.div`
+    display : flex;
+    width : 100%;
+    height : 5%;
+    flex-direction : row;
+    align-items : center;
+    margin-top : 10px;
+    margin-bottom : 20px;
+    justify-content : flex-end;
+`;
+
+const ResultTextBox = styled.div`
+    display : flex;
+    width : 50%;
+    height : 100%;
+    flex-direction : row;
+    align-items : center;
+`;
+
+const ResultSortBox = styled.div`
+    display : flex;
+    width : 50%;
+    height : 100%;
+    flex-direction : row;
+    justify-content : flex-end;
+    align-items : center;
+`;
+
 const TypeText = styled.span`
     font-family : 'Noto Sans KR', sans-serif;
     font-size : 20px;
@@ -134,7 +163,8 @@ class SearchMovie extends React.Component{
         total_results : 0,
         total_pages : 0,
         page : 2,
-        showScroll : false
+        showScroll : false,
+        sortValue : { label : "평점 높은순", value : "highscore" },
     }
 
     handleChange = (e) => {
@@ -238,7 +268,7 @@ class SearchMovie extends React.Component{
                 total_pages : response.data.total_pages,
                 total_results : response.data.total_results
             });
-            console.log(this.state.movieResult);
+            this.handleSortArray(this.state.sortValue.value, this.state.movieResult);
             this.handleArrayPush(this.state.keyword);
             alert("검색결과를 불러왔습니다.");
         }).catch((error) => {
@@ -279,7 +309,81 @@ class SearchMovie extends React.Component{
         });
     }
 
+    handleSortChange(value) {
+        this.setState({
+            sortValue : value
+        }, () => console.log(this.state.sortValue));
+    };
+
+    handleSortArray(type, arr){
+        switch(type){
+            case 'highscore':
+                if(arr.length < 2){
+                    return null;
+                }else{
+                    arr.sort(function(a, b){
+                        return b['vote_average'] - a['vote_average'];
+                    });
+                    this.setState({
+                        movieResult : arr
+                    });
+                    return null;
+                }
+            case 'rowscore':
+                if(arr.length < 2){
+                    return null;
+                }else{
+                    arr.sort(function(a, b){
+                        return a['vote_average'] - b['vote_average'];
+                    });
+                    this.setState({
+                        movieResult : arr
+                    });
+                    return null;
+                }
+            case 'hightext':
+                if(arr.length < 2){
+                    return null;
+                }else{
+                    arr.sort(function(a, b){
+                        return a.title < b.title ? -1 : a.name > b.name ? 1 : 0;
+                    });
+                    this.setState({
+                        movieResult : arr
+                    });
+                    return null;
+                }
+            case 'rowtext':
+                if(arr.length < 2){
+                    return null;
+                }else{
+                    arr.sort(function(a, b){
+                        return a.name > b.name ? -1 : a.name < b.name ? 1 : 0;
+                    });
+                    this.setState({
+                        movieResult : arr
+                    });
+                    return null;
+                }
+            case 'highdate':
+                return null;
+            case 'rowdate':
+                return null;
+            default:
+                return null;
+        }
+    }
+
     render(){
+        const DropdownOptions = [
+            {value : "highscore" , label : "평점 높은순"},
+            {value : "rowscore" , label : "평점 낮은순"},
+            {value : "hightext" , label : "가나다↑"},
+            {value : "rowtext" , label : "가나다↓"},
+            {value : "highdate" , label : "개봉일순↑"},
+            {value : "rowdate" , label : "개봉일순↓"},
+        ];
+
         return(
             <Container>
                 <Header>
@@ -331,7 +435,23 @@ class SearchMovie extends React.Component{
                                             </ResultBody>
                                         </> : 
                                         <>
-                                            <TypeText>총 {this.state.total_results}개의 영화가 있습니다.</TypeText>
+                                            <ResultTopBox>
+                                                <ResultTextBox>
+                                                    <TypeText style = {{margin : 0}}>총 {this.state.total_results}개의 영화가 있습니다.</TypeText>
+                                                </ResultTextBox>
+                                                <ResultSortBox>
+                                                    <TypeText style = {{margin : 0, marginRight : "5px"}}>정렬기준: </TypeText>
+                                                    <div style = {{width : "150px"}}>
+                                                        <Select
+                                                            menuPlacement = "auto"
+                                                            menuPosition = 'fixed'
+                                                            options = {DropdownOptions}
+                                                            value = {this.state.sortValue}
+                                                            onChange = {value => this.handleSortChange(value)}
+                                                        />
+                                                    </div>
+                                                </ResultSortBox>
+                                            </ResultTopBox>
                                             <InfiniteScroll
                                                 dataLength = {this.state.movieResult.length}
                                                 next = {this.FetchData}
