@@ -261,6 +261,7 @@ class Detail extends React.Component{
                                         starSpacing = '2px'
                                     />
                                     <span className = "type" style = {{marginLeft : "10px"}}>{Math.round(this.state.Details.vote_average)/2}점</span>
+                                    <span className = "type" style = {{marginLeft : "10px"}}>총 {this.state.Details.vote_count}명</span>
                                     <span className="textBar">|</span>
                                     <span className = "type">무뷰어 평점 : </span>
                                     <StarRatings
