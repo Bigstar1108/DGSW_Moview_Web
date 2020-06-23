@@ -173,7 +173,8 @@ class SearchMovie extends React.Component{
         })
         if(e.target.value === ""){
             this.setState({
-                searchEvent : false
+                searchEvent : false,
+                sortValue : { label : "평점 높은순", value : "highscore" },
             });
         }
     }
@@ -239,12 +240,13 @@ class SearchMovie extends React.Component{
     }
 
     //배열에 항목을 삭제하여 localStorage에 저장
-    handleArrayRemove = (id) => {
-        var _lastKeyword = this.state.lastKeyword.filter(data => data.id !== id);
+    handleArrayRemove = async (id, keyword) => {
+        var _lastKeyword = await this.state.lastKeyword.filter(data => data.id !== id);
         this.setState({
             lastKeyword : _lastKeyword,
         });
         localStorage.setItem('lastKeyword', JSON.stringify(_lastKeyword));
+        alert(`${keyword}가 삭제되었습니다.`);
     }
 
     handleSubmit = (e) => {
@@ -312,7 +314,7 @@ class SearchMovie extends React.Component{
     handleSortChange(value) {
         this.setState({
             sortValue : value
-        }, () => console.log(this.state.sortValue));
+        }, () => this.handleSortArray(this.state.sortValue.value, this.state.movieResult));
     };
 
     handleSortArray(type, arr){
@@ -358,7 +360,7 @@ class SearchMovie extends React.Component{
                     return null;
                 }else{
                     arr.sort(function(a, b){
-                        return a.name > b.name ? -1 : a.name < b.name ? 1 : 0;
+                        return a.title > b.title ? -1 : a.title < b.title ? 1 : 0;
                     });
                     this.setState({
                         movieResult : arr
@@ -366,9 +368,29 @@ class SearchMovie extends React.Component{
                     return null;
                 }
             case 'highdate':
-                return null;
+                if(arr.length < 2){
+                    return null;
+                }else{
+                    arr.sort(function(a, b){
+                        return a.release_date < b.release_date ? -1 : a.release_date > b.release_date ? 1 : 0;
+                    });
+                    this.setState({
+                        movieResult : arr
+                    });
+                    return null;
+                }
             case 'rowdate':
-                return null;
+                if(arr.length < 2){
+                    return null;
+                }else{
+                    arr.sort(function(a, b){
+                        return a.release_date > b.release_date ? -1 : a.release_date < b.release_date ? 1 : 0;
+                    });
+                    this.setState({
+                        movieResult : arr
+                    });
+                    return null;
+                }
             default:
                 return null;
         }
