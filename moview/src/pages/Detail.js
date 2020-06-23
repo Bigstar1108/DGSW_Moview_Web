@@ -120,6 +120,7 @@ class Detail extends React.Component{
         Credits : [], //배우, 제작진 정보
         DateArray : [], //개봉일 split한 배열
         Genres : [], //장르 모음
+        company : [],
         vote : 0, //영화 평점
         Like : false, //즐겨찾기
     }
@@ -140,6 +141,7 @@ class Detail extends React.Component{
                     Credits : Credit,
                     DateArray : DateArray,
                     Genres : Detail.genres,
+                    company : Detail.production_companies,
                     vote : voteAverage
                 });
                 console.log(Detail);
@@ -249,6 +251,17 @@ class Detail extends React.Component{
                                     <span className = "textBar">|</span>
                                     <span className = "type">런타임 : </span>
                                     <span className = "DetailText">{this.state.Details.runtime} 분</span>
+                                </div>
+
+                                <div className = "InfoTextBox">
+                                    <span className = "type">제작사/수입/배급사 : </span>
+                                    {
+                                        this.state.company.map((company, index) => (
+                                            <div style = {{marginLeft : "5px"}}>
+                                                <span key = {index}> {company.name}, </span>
+                                            </div>
+                                        ))
+                                    }
                                 </div>
 
                                 <div className = "InfoTextBox">
