@@ -64,7 +64,6 @@ const ReviewBox = styled.div`
     width : 50%;
     height : 100%;
     flex-direction : column;
-    background-color : blue;
 `;
 
 const CreditTopBox = styled.div`
@@ -256,9 +255,9 @@ class Detail extends React.Component{
                                 <div className = "InfoTextBox">
                                     <span className = "type">제작사/수입/배급사 : </span>
                                     {
-                                        this.state.company.map((company, index) => (
+                                        this.state.company.slice(0, 3).map((company, index) => (
                                             <div style = {{marginLeft : "5px"}}>
-                                                <span key = {index}> {company.name}, </span>
+                                                <span key = {index}> {company.name} </span>
                                             </div>
                                         ))
                                     }
