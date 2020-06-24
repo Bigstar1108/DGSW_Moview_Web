@@ -4,10 +4,12 @@ import Header from '../components/Header';
 import Slider from 'react-slick';
 import '../styles/Home.css';
 import { TMDB_API_KEY } from '../config/config.json';
+import { SERVER } from '../config/config.json';
 import defaultApi from '../lib/api/defaultApi';
 import NowPlayingCard from '../components/nowPlayingCard';
 import { Pause, PlayArrow } from '@material-ui/icons';
 import { PacmanLoader } from 'react-spinners';
+import axios from 'axios';
 
 const Container = styled.div`
     display : flex;
@@ -70,6 +72,33 @@ const ControlSlideBtn = styled.button`
     `}
 `;
 
+const BottomBox = styled.div`
+    display : flex;
+    width : 100%;
+    height : 60%;
+    margin-top : 20px;
+    flex-direction : row;
+`;
+
+const BottomTextContainer = styled.div`
+    display : flex;
+    width : 45%;
+    height : 90%;
+    flex-direction : column;
+    justify-content : center;
+`;
+
+const BottomEventContainer = styled.div`
+    display : flex;
+    width : 55%;
+    height : 100%;
+    background-color : red;
+`;
+
+const getMember = axios.get(`${SERVER}/auth/all`);
+const getReview = axios.get(`${SERVER}/review/all`);
+const getNowPlaying = defaultApi.get(`movie/now_playing?api_key=${TMDB_API_KEY}&language=ko&page=1&region=KR`);
+
 class Home extends React.Component{
     state = {
         movieList : [],
@@ -99,16 +128,20 @@ class Home extends React.Component{
     }
 
     componentDidMount(){
-        defaultApi.get(
-            `movie/now_playing?api_key=${TMDB_API_KEY}&language=ko&page=1&region=KR`
-        ).then((response) => {
+        axios.all([getMember, getReview, getNowPlaying])
+        .then(axios.spread((...response) => {
+            const Member = response[0];
+            const Review = response[1];
+            const NowPlaying = response[2];
+
             this.setState({
-                movieList : response.data.results,
+                movieList : NowPlaying.data.results,
+                member : Member.data.total_results,
+                review : Review.data.total_results
             });
-            console.log(this.state.movieList);
-        }).catch((error) => {
+        })).catch((error) => {
             console.log(error);
-            alert("서버오류 : 현재 상영중인 영화 목록을 불러오는데 실패했습니다.");
+            alert("서버오류!");
         })
     }
 
@@ -152,6 +185,15 @@ class Home extends React.Component{
                             </Slider> : <PacmanLoader loading = {true} color = {"#ffff00"} /> }
                             </BottomSliderBox>
                     </SliderContainer>
+
+                    <BottomBox>
+                        <BottomTextContainer>
+                            <span className = "InfoText"><span style = {{color : "#F03535", fontWeight : "bold"}}>무뷰</span>는</span>
+                            <span className = "InfoText">총 <b>{this.state.member}명</b>의 <span style = {{color : "#F03535", fontWeight : "bold"}}>무뷰어</span>님들의</span>
+                            <span className = "InfoText"><b>{this.state.review}개</b>의 리뷰로 이루어져 있습니다!</span>
+                        </BottomTextContainer>
+                        <BottomEventContainer></BottomEventContainer>
+                    </BottomBox>
                 </Body>
             </Container>
         );
