@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import '../../styles/nowPlayingCard.css';
-import StarRatings from 'react-star-ratings';
 import { Link } from 'react-router-dom';
 
 const Container = styled.div`
@@ -60,13 +59,6 @@ class MovieResultBox extends React.Component{
                         }
                         <span className = "date">{this.props.date}</span>
                         <RateBox>
-                            {/* <StarRatings
-                                rating = {this.props.vote_average}
-                                numberOfStars = {5}
-                                starRatedColor = "#F03535"
-                                starDimension = "15px"
-                                starSpacing = '3px'
-                            /> */}
                             <span className = "rating" style = {{margin : 0}}>영화 평점 : {this.props.vote_average} 점</span>
                         </RateBox>
                     </InfoBox>
