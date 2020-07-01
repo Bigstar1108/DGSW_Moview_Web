@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
 import { TMDB_API_KEY } from '../config/config.json';
+import { SERVER } from '../config/config.json';
 import defaultApi from '../lib/api/defaultApi';
 import axios from 'axios';
 import '../styles/Detail.css';
@@ -122,13 +123,14 @@ class Detail extends React.Component{
         company : [],
         vote : 0, //영화 평점
         Like : false, //즐겨찾기
+        bookmarkId : 0,
     }
 
-    componentDidMount(){
+    async componentDidMount(){
         const getDetail = defaultApi.get(`movie/${this.props.match.params.movieId}?api_key=${TMDB_API_KEY}&language=ko`);
         const getCredits = defaultApi.get(`movie/${this.props.match.params.movieId}/credits?api_key=${TMDB_API_KEY}`);
 
-        axios.all([getDetail, getCredits])
+        await axios.all([getDetail, getCredits])
         .then(
             axios.spread((...response) => {
                 const Detail = response[0].data;
@@ -149,8 +151,50 @@ class Detail extends React.Component{
         ).catch((error) => {
             console.log(error);
             alert("영화 상세정보를 불러오는데 실패했습니다.");
-        })
+        });
+
+        await this.getBookmark();
     }
+
+    getBookmark = () => {
+        switch(localStorage.getItem('KeepLogin')){
+            case 'true':
+                if(!(!!localStorage.getItem('member')) || !(!!localStorage.getItem('token'))){
+                    return null;
+                }else{
+                    axios.get(`${SERVER}/bookmark`)
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
+                }
+            case 'false':
+                if(!(!!this.props.member) || !(!!this.props.token)){
+                    //false면 로그인이 되어있지 않음
+                    console.log("getbookmark");
+                    return null;
+                }else{
+                    axios.post(`${SERVER}/bookmark/findbookmark`, {
+                        movieId : this.state.Details.id,
+                        name : JSON.parse(localStorage.getItem('member')).Name,
+                    })
+                    .then((response) => {
+                        this.setState({
+                            Like : response.data.bookmark,
+                            bookmarkId : response.data.id,
+                        });
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
+                }
+            default:
+                return null;
+        }
+    }
+
     //기능 추가 필요.
     onClickLike = () => {
         switch(localStorage.getItem('KeepLogin')){
@@ -161,11 +205,19 @@ class Detail extends React.Component{
                 }else{
                     switch(this.state.Like){
                         case true:
-                            this.setState({
-                                Like : !this.state.Like,
-                            });
-                            alert("즐겨찾기를 해제했습니다.");
-                            return null;
+                            axios.delete(`${SERVER}/bookmark?id=${this.state.bookmarkId}`)
+                            .then((response) => {
+                                this.setState({
+                                    Like : !this.state.Like,
+                                });
+                                alert("즐겨찾기를 해제했습니다.");
+                                return null;
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                alert("서버 오류!");
+                                return null;
+                            })
                         case false:
                             this.setState({
                                 Like : !this.state.Like,
@@ -184,11 +236,19 @@ class Detail extends React.Component{
                 }else{
                     switch(this.state.Like){
                         case true:
-                            this.setState({
-                                Like : !this.state.Like,
-                            });
-                            alert("즐겨찾기를 해제했습니다.");
-                            return null;
+                            axios.delete(`${SERVER}/bookmark?id=${this.state.bookmarkId}`)
+                            .then((response) => {
+                                this.setState({
+                                    Like : !this.state.Like,
+                                });
+                                alert("즐겨찾기를 해제했습니다.");
+                                return null;
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                alert("서버 오류!");
+                                return null;
+                            })
                         case false:
                             this.setState({
                                 Like : !this.state.Like,
