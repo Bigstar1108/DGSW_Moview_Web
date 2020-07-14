@@ -152,7 +152,6 @@ class Headers extends React.Component{
 
                     <TextConatiner>
                         <HeaderText to = '/searchmovie'>영화 검색하기</HeaderText>
-                        <HeaderText>리뷰</HeaderText>
                         <HeaderText>이벤트</HeaderText>
                     </TextConatiner>
 

@@ -2,7 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { ArrowBackIos, ArrowUpward } from '@material-ui/icons';
 import LikeScreen from '../components/profile/LikeScreen';
-import ProfileScreen from '../components/profile/ProfileScreen';
+import CalendarScreen from '../components/profile/CalendarScreen';
+import ReviewScreen from '../components/profile/ReviewScreen';
+import { connect } from 'react-redux';
+import { deleteuserdata } from '../modules/actions/Login.actions';
 
 const Container = styled.div`
     display : flex;
@@ -82,6 +85,35 @@ const TypeText = styled.span`
     }
 `;
 
+const InfoText = styled.span`
+    font-size : 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight : bold;
+    margin-bottom : 10px;
+`;
+
+const HeaderProfileBox = styled.div`
+    display : flex;
+    width : 10%;
+    height : 100%;
+    position : absolute;
+    right : 0;
+    margin-right : 10%;
+    align-items : center;
+    justify-content : flex-end;
+`;
+
+const LogOutBox = styled.div`
+    display : flex;
+    width : 100%;
+    height : 5%;
+    position : absolute;
+    bottom : 0;
+    margin-bottom : 40%;
+    align-items : center;
+    justify-content : center;
+`;
+
 const ArrowUpBtn = styled.button`
     display : flex;
     width : 50px;
@@ -102,14 +134,27 @@ const ArrowUpBtn = styled.button`
     margin-bottom : 5%;
 `;
 
+const LogOutBtn = styled.button`
+    width : 90%;
+    height : 40px;
+    background-color : #F03535;
+    color : white;
+    outline : none;
+    cursor : pointer;
+    border-style : none;
+    font-family : 'Noto Sans KR', sans-serif;
+    border-radius : 3px;
+    font-size : 13px;
+    font-weight : bold;
+`;
+
 class Profile extends React.Component{
     state = {
         member : JSON.parse(localStorage.getItem('member')),
         typeReview : false,
-        typeLike : false,
+        typeLike : true,
         typeCalendar : false,
-        typeProfile : true,
-        typeScreen : 'profile'
+        typeScreen : 'like'
     }
 
     componentDidMount(){
@@ -138,21 +183,11 @@ class Profile extends React.Component{
 
     handleOnClick = (type) => {
         switch(type){
-            case 'profile':
-                this.setState({
-                    typeLike : false,
-                    typeReview : false,
-                    typeCalendar : false,
-                    typeProfile : true,
-                    typeScreen : 'profile'
-                });
-                return null;
             case 'like':
                 this.setState({
                     typeLike : true,
                     typeReview : false,
                     typeCalendar : false,
-                    typeProfile : false,
                     typeScreen : 'like'
                 });
                 return null;
@@ -161,7 +196,6 @@ class Profile extends React.Component{
                     typeLike : false,
                     typeReview : true,
                     typeCalendar : false,
-                    typeProfile : false,
                     typeScreen : 'review'
                 });
                 return null;
@@ -170,7 +204,6 @@ class Profile extends React.Component{
                     typeLike : false,
                     typeReview : false,
                     typeCalendar : true,
-                    typeProfile : false,
                     typeScreen : 'calendar'
                 });
                 return null;
@@ -181,17 +214,21 @@ class Profile extends React.Component{
 
     handleScreen = (type) => {
         switch(type){
-            case 'profile':
-                return <ProfileScreen />;
             case 'like':
                 return <LikeScreen />;
             case 'review':
-                return null;
+                return <ReviewScreen />;
             case 'calendar':
-                return null;
+                return <CalendarScreen />;
             default:
                 return null;
         };
+    }
+
+    handleLogOut = (history) => {
+        localStorage.removeItem("member");
+        this.props.onDeleteUserData();
+        history.push('/');
     }
 
     render(){
@@ -203,18 +240,16 @@ class Profile extends React.Component{
                             style = {{cursor : "pointer", position : "fixed", left : 0, marginLeft : "10%"}}
                             onClick = {() => this.props.history.goBack()}
                         />
+                        <HeaderProfileBox>
+                            <InfoText>
+                                {this.state.member.Name}({this.state.member.id})님
+                            </InfoText>
+                        </HeaderProfileBox>
                     </MainHeader>
                 </Header>
                 <Body>
                     <Nav>
                         <ul>
-                            <TypeLi>
-                                <TypeText 
-                                    value = {this.state.typeProfile}
-                                    onClick = {() => this.handleOnClick('profile')}
-                                >프로필</TypeText>
-                            </TypeLi>
-
                             <TypeLi>
                                 <TypeText 
                                     value = {this.state.typeLike}
@@ -236,6 +271,11 @@ class Profile extends React.Component{
                                 >캘린더</TypeText>
                             </TypeLi>
                         </ul>
+                        <LogOutBox>
+                            <LogOutBtn
+                                onClick = {() => this.handleLogOut(this.props.history)}
+                            >로그아웃</LogOutBtn>
+                        </LogOutBox>
                     </Nav>
                     <NavBody>
                         {
@@ -254,5 +294,13 @@ class Profile extends React.Component{
         );
     }
 }
+
+let mapDispatchToProps = (dispatch) => {
+    return{
+        onDeleteUserData : () => dispatch(deleteuserdata())
+    };
+}
+
+Profile = connect(undefined, mapDispatchToProps)(Profile);
 
 export default Profile;

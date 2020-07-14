@@ -337,18 +337,18 @@ class Detail extends React.Component{
                                     <span className="textBar">|</span>
                                     <span className = "type">무뷰어 평점 : </span>
                                     <StarRatings
-                                        rating = {3}
+                                        rating = {0}
                                         numberOfStars = {5}
                                         starRatedColor = "#F03535"
                                         starDimension = "13px"
                                         starSpacing = '2px'
                                     />
-                                    <span className = "type" style = {{marginLeft : "10px"}}>3점,</span>
-                                    <span className = "type" style = {{marginLeft : "10px"}}>총 3명</span>
+                                    <span className = "type" style = {{marginLeft : "10px"}}>0점,</span>
+                                    <span className = "type" style = {{marginLeft : "10px"}}>총 0명</span>
                                     <span className = "textBar">|</span>
                                     <span className = "type">나의 평점 : </span>
                                     <StarRatings
-                                        rating = {3}
+                                        rating = {0}
                                         numberOfStars = {5}
                                         starRatedColor = "#F03535"
                                         starDimension = "13px"
@@ -396,6 +396,12 @@ class Detail extends React.Component{
                             <CreditTopBox>
                                 <CreditExtraText>더보기</CreditExtraText>
                             </CreditTopBox>
+                            <div style = {{display : "flex", width : "100%", height : "90%", justifyContent : "center", alignItems : "center"}}>
+                                <span className = "type">
+                                    작성된 리뷰가 없습니다. <br />
+                                    처음으로 리뷰를 남겨보세요!
+                                </span>
+                            </div>
                         </ReviewBox>
                     </BottomBody>
                 </Body>
