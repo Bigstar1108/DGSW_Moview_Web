@@ -55,7 +55,7 @@ GITHUB: [https://github.com/Bigstar1108/DGSW_Moview_Web](https://github.com/Bigs
   1. 영화 정보
   2. 제작진/배우 정보
   3. 작성된 리뷰 보기
-  4. 영화 즐겨찾긱
+  4. 영화 즐겨찾기
   
 - **리뷰 상세보기**
 
